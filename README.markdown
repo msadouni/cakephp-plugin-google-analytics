@@ -33,7 +33,7 @@ This will return an array of Accounts :
 
 Grab the Account.profileId you need and get the Account data :
 
-    $data = $this->GoogleAnalytics->find('first', array(
+    $data = $this->GoogleAnalyticsAccount->find('first', array(
         'conditions' => array(
             'profileId' => $profileId,
             'start-date' => 'YYYY-MM-DD',
@@ -41,7 +41,7 @@ Grab the Account.profileId you need and get the Account data :
 
 The `start-date` and `end-date` conditions are mandatory. You can add other conditions to perform searches :
 
-    $data = $this->GoogleAnalytics->find('first', array(
+    $data = $this->GoogleAnalyticsAccount->find('first', array(
         'conditions' => array(
             'profileId' => $profileId,
             'start-date' => 'YYYY-MM-DD',
@@ -52,7 +52,7 @@ The `start-date` and `end-date` conditions are mandatory. You can add other cond
 
 will get you the new visits per country, ordered by descending new visits, for the period given. you can also pass several dimensions (maximum 7), metrics (maximum 10) and sort options (must match dimensions or metrics given) by passing arrays :
 
-    $data = $this->GoogleAnalytics->find('first', array(
+    $data = $this->GoogleAnalyticsAccount->find('first', array(
         'conditions' => array(
             'profileId' => $profileId,
             'start-date' => 'YYYY-MM-DD',
