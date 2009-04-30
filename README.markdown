@@ -1,9 +1,9 @@
 # Install
 Several possibilities :
 
-* `git://github.com/msadouni/cakephp-plugin-google-analytics.git google_analytics` in your plugin directory
-* download and unzip into a `google_analytics` folder in your `plugins` folder
-* `git submodule add git://github.com/msadouni/cakephp-plugin-google-analytics.git plugins/google_analytics`
+* `git clone git://github.com/msadouni/cakephp-plugin-google-analytics.git google_analytics` in your plugin directory
+* Download and unzip into a `google_analytics` folder in your `plugins` folder
+* If your project is already versioned with Git : `git submodule add git://github.com/msadouni/cakephp-plugin-google-analytics.git plugins/google_analytics`
 
 # Configuration
 Duplicate `config/google_analytics.php.default` into `config/google_analytics.php` and fill your account information in `$google_analytics` array
