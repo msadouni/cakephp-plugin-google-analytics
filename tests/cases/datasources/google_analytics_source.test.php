@@ -1,8 +1,14 @@
 <?php
-require_once ROOT.DS.APP_DIR.DS.'plugins'.DS.'google_analytics'.DS.'config'.DS.'google_analytics.php';
-require_once ROOT.DS.APP_DIR.DS.'plugins'.DS.'google_analytics'.DS.'models'.DS.'datasources'.DS.'google_analytics_source.php';
+App::import(array(
+    'type' => 'file',
+    'name' => 'GoogleAnalytics.GOOGLE_ANALYTICS_CONFIG',
+    'file' => 'config' . DS . 'google_analytics.php'));
+App::import(array(
+    'type' => 'file',
+    'name' => 'GoogleAnalytics.GoogleAnalyticsSource',
+    'file' => 'models' . DS . 'datasources' . DS . 'google_analytics_source.php'));
 
-class GoogleAnalyticsSourceTest extends CakeTestCase
+class GoogleAnalyticsSourceTestCase extends CakeTestCase
 {
     function startTest()
     {
