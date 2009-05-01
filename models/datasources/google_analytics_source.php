@@ -78,23 +78,25 @@ class GoogleAnalyticsSource extends DataSource
     {
         $accounts = $this->get('analytics/feeds/accounts/default');
         $results = $this->__to_array($accounts);
-        $feed = $results['Feed'];
+        $entries = Set::extract('/Feed/Entry', $results);
         $data = array();
-        foreach ($feed['Entry'] as $entry)
+        foreach ($entries as $entry)
         {
+            // sometimes the the keys are ucfirst'ed, sometimes not...
+            $entry = array_change_key_case($entry['Entry'], CASE_LOWER);
             $accountId = Set::extract(
-                '/Property[name=ga:accountId]/value', $entry);
+                '/property[name=ga:accountId]/value', $entry);
             $accountName = Set::extract(
-                '/Property[name=ga:accountName]/value', $entry);
+                '/property[name=ga:accountName]/value', $entry);
             $profileId = Set::extract(
-                '/Property[name=ga:profileId]/value', $entry);
+                '/property[name=ga:profileId]/value', $entry);
             $webPropertyId = Set::extract(
-                '/Property[name=ga:webPropertyId]/value', $entry);
+                '/property[name=ga:webPropertyId]/value', $entry);
             $account = array('Account' => array(
                 'id' => $entry['id'],
                 'updated' => $entry['updated'],
                 'title' => $entry['title']['value'],
-                'tableId' => $entry['tableId'],
+                'tableId' => $entry['tableid'],
                 'accountId' => $accountId[0],
                 'accountName' => $accountName[0],
                 'profileId' => $profileId[0],

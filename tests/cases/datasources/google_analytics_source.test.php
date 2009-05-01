@@ -107,21 +107,22 @@ class GoogleAnalyticsSourceTest extends CakeTestCase
     {
         Mock::generatePartial(
             'GoogleAnalyticsSource',
-            'GoogleAnalyticsSourceMock',
+            'MockGoogleAnalyticsSourceTestRead',
             array('accounts', 'account_data'));
-        $mock =& new GoogleAnalyticsSourceMock($this);
+
+        $mock =& new MockGoogleAnalyticsSourceTestRead();
         $mock->setReturnValue('accounts', 'accounts');
         $mock->setReturnValue('account_data', 'account_data');
-    
+
         $result = $mock->read($model, array());
         $this->assertEqual($result, 'accounts',
             "should call accounts() when given no parameters : %s");
-    
+
         $result = $mock->read($model, array(
             'conditions' => array('profileId' => 123456)));
         $this->assertEqual($result, 'account_data',
             "should call account_data() when given a profileId : %s");
-    
+
         //TODO test that Model->find('all') and Model->find('first') trigger
         // the appropriate calls from read()
     }
@@ -346,5 +347,111 @@ class GoogleAnalyticsSourceTest extends CakeTestCase
         $this->assertIdentical($this->db->__dataPoints(array()), array(),
             "should return array() with empty parameters : %s");
         
+    }
+
+    function test_accounts()
+    {
+        Mock::generatePartial(
+            'GoogleAnalyticsSource',
+            'GoogleAnalyticsSourceMockTestAccounts',
+            array('get'));
+        $mock =& new GoogleAnalyticsSourceMockTestAccounts();
+
+        $several_accounts = array(
+            'Feed' => array(
+                'Entry' => array(
+                    array(
+                        'id' => 'http://google.com/123',
+                        'updated' => 'updated',
+                        'title' => array('value' => 'account1'),
+                        'tableId' => 'ga:123',
+                        'Property' => array(
+                            array(
+                                'name' => 'ga:accountId',
+                                'value' => 456),
+                            array(
+                                'name' => 'ga:accountName',
+                                'value' => 'main account'),
+                            array(
+                                'name' => 'ga:profileId',
+                                'value' => 123),
+                            array(
+                                'name' => 'ga:webPropertyId',
+                                'value' => 'UA1'))),
+                    array(
+                        'id' => 'http://google.com/321',
+                        'updated' => 'updated',
+                        'title' => array('value' => 'account2'),
+                        'tableId' => 'ga:321',
+                        'Property' => array(
+                            array(
+                                'name' => 'ga:accountId',
+                                'value' => 456),
+                            array(
+                                'name' => 'ga:accountName',
+                                'value' => 'main account'),
+                            array(
+                                'name' => 'ga:profileId',
+                                'value' => 321),
+                            array(
+                                'name' => 'ga:webPropertyId',
+                                'value' => 'UA2'))))));
+
+        $mock->setReturnValueAt(
+            0, 'get', $several_accounts, array('analytics/feeds/accounts/default'));
+        $expected = array(
+            array(
+                'Account' => array(
+                    'id' => 'http://google.com/123',
+                    'updated' => 'updated',
+                    'title' => 'account1',
+                    'tableId' => 'ga:123',
+                    'accountId' => 456,
+                    'accountName' => 'main account',
+                    'profileId' => 123,
+                    'webPropertyId' => 'UA1')),
+            array(
+                'Account' => array(
+                    'id' => 'http://google.com/321',
+                    'updated' => 'updated',
+                    'title' => 'account2',
+                    'tableId' => 'ga:321',
+                    'accountId' => 456,
+                    'accountName' => 'main account',
+                    'profileId' => 321,
+                    'webPropertyId' => 'UA2')));
+
+        $this->assertEqual($mock->accounts(), $expected,
+            "should return the accounts correctly formatted : %s");
+
+        $one_account = array(
+            'Feed' => array(
+                'Entry' => array(
+                    'id' => 'http://google.com/123',
+                    'updated' => 'updated',
+                    'title' => array('value' => 'account1'),
+                    'tableId' => 'ga:123',
+                    'property' => array(
+                        array('name' => 'ga:accountId', 'value' => 456),
+                        array('name' => 'ga:accountName', 'value' => 'main account'),
+                        array('name' => 'ga:profileId', 'value' => 123),
+                        array('name' => 'ga:webPropertyId', 'value' => 'UA1')))));
+
+        $mock->setReturnValueAt(
+            1, 'get', $one_account, array('analytics/feeds/accounts/default'));
+        $expected = array(
+            array(
+                'Account' => array(
+                    'id' => 'http://google.com/123',
+                    'updated' => 'updated',
+                    'title' => 'account1',
+                    'tableId' => 'ga:123',
+                    'accountId' => 456,
+                    'accountName' => 'main account',
+                    'profileId' => 123,
+                    'webPropertyId' => 'UA1')));
+
+        $this->assertEqual($mock->accounts(), $expected,
+            "should work with only one account : %s");
     }
 }
