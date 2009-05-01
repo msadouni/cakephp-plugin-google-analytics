@@ -6,7 +6,7 @@ class GoogleAnalyticsSource extends DataSource
     var $Http = null;
     var $token = '';
     var $base_url = 'https://www.google.com/';
-    var $__baseConfig = array(
+    var $_baseConfig = array(
         'datasource' => 'google_analytics',
         'Email' => '',
         'Passwd' => '');
