@@ -108,7 +108,7 @@ class GoogleAnalyticsSource extends DataSource
 
     function account_data($queryData)
     {
-        $this->__validateQueryData($queryData);
+        $queryData = $this->__validateQueryData($queryData);
 
         $conditions = $queryData['conditions'];
 
