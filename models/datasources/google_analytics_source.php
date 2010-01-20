@@ -10,6 +10,7 @@ class GoogleAnalyticsSource extends DataSource
         'datasource' => 'google_analytics',
         'Email' => '',
         'Passwd' => '');
+    var $cacheSources = false;
 
     function __construct($config, $autoConnect = true)
     {
@@ -67,7 +68,7 @@ class GoogleAnalyticsSource extends DataSource
 
     function read(&$model, $queryData)
     {
-        if (!empty($queryData['conditions']['profileId']))
+        if (!empty($queryData['conditions']['tableId']))
         {
             return $this->account_data($queryData);
         }
@@ -84,23 +85,23 @@ class GoogleAnalyticsSource extends DataSource
         {
             // sometimes the the keys are ucfirst'ed, sometimes not...
             $entry = array_change_key_case($entry['Entry'], CASE_LOWER);
-            $accountId = Set::extract(
-                '/property[name=ga:accountId]/value', $entry);
-            $accountName = Set::extract(
-                '/property[name=ga:accountName]/value', $entry);
-            $profileId = Set::extract(
-                '/property[name=ga:profileId]/value', $entry);
-            $webPropertyId = Set::extract(
-                '/property[name=ga:webPropertyId]/value', $entry);
+            $accountId = $this->__extract_property_value(
+                $entry, 'accountId');
+            $accountName = $this->__extract_property_value(
+                $entry, 'accountName');
+            $profileId = $this->__extract_property_value(
+                $entry, 'profileId');
+            $webPropertyId = $this->__extract_property_value(
+                $entry, 'webPropertyId');
             $account = array('Account' => array(
                 'id' => $entry['id'],
                 'updated' => $entry['updated'],
                 'title' => $entry['title']['value'],
-                'tableId' => $entry['tableid'],
-                'accountId' => $accountId[0],
-                'accountName' => $accountName[0],
-                'profileId' => $profileId[0],
-                'webPropertyId' => $webPropertyId[0]));
+                'tableId' => str_replace('ga:', '', $entry['tableid']),
+                'accountId' => $accountId,
+                'accountName' => $accountName,
+                'profileId' => $profileId,
+                'webPropertyId' => $webPropertyId));
             $data[] = $account;
         }
         return $data;
@@ -113,7 +114,7 @@ class GoogleAnalyticsSource extends DataSource
         $conditions = $queryData['conditions'];
 
         $defaultParams = array(
-            'ids' => 'ga:'.$conditions['profileId'],
+            'ids' => 'ga:'.$conditions['tableId'],
             'start-date' => strftime(
                 '%Y-%m-%d', strtotime($conditions['start-date'])),
             'end-date' => strftime(
@@ -128,7 +129,7 @@ class GoogleAnalyticsSource extends DataSource
         // the result must be returned as [0 => Account => [...]]
         // because find('first') returns results[0]
         $data = array(array('Account' => array(
-            'profileId' => $feed['DataSource']['tableId'],
+            'tableId' => $feed['DataSource']['tableId'],
             'name' => $feed['DataSource']['tableName'],
             'totalResults' => $feed['totalResults'],
             'startIndex' => $feed['startIndex'],
@@ -150,6 +151,11 @@ class GoogleAnalyticsSource extends DataSource
         if (empty($conditions['end-date']))
         {
             trigger_error(__('end-date is required', true), E_USER_ERROR);
+            return null;
+        }
+        if (empty($conditions['metrics']))
+        {
+            trigger_error(__('metrics is required', true), E_USER_ERROR);
             return null;
         }
         if (strtotime($conditions['start-date']) >
@@ -350,5 +356,21 @@ class GoogleAnalyticsSource extends DataSource
         $xml = null;
         unset($xml);
         return $array;
+    }
+
+    function __extract_property_value($entry, $property) {
+        if (empty($entry) || empty($property)) {
+            return '';
+        }
+        if (!is_array($entry) || !is_string($property)) {
+            return '';
+        }
+        $value = Set::extract(
+            "/property[name=ga:$property]/value", $entry);
+
+        if (!empty($value[0])) {
+            return $value[0];
+        }
+        return '';
     }
 }

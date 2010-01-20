@@ -51,7 +51,7 @@
 </table>
 <h3>Search</h3>
 <form action="<?php echo $html->url(array('action'=>'search')) ?>" method="post">
-    <input type="hidden" name="profileId" value="<?php echo $profileId ?>">
+    <input type="hidden" name="tableId" value="<?php echo $tableId ?>">
     <div>
         <label for="start-date">Start date (YYY-MM-DD)</label>
         <input id="start-date" name="start-date" value="<?php echo $startDate ?>">

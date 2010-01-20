@@ -23,9 +23,9 @@ This will return an array of Accounts :
             [id] => account url
             [updated] => last update datetime
             [title] => account title
-            [tableId] => ga:profileId
+            [tableId] => tableId (the id you need to perform searches on)
             [accountId] => account id
-            [profileId] => profile id (the id you need to perform searches next)
+            [profileId] => profile id
             [webPropertyId] => tracker id on your website
     [1] =>
         [Account] => ...
@@ -35,7 +35,7 @@ Grab the Account.profileId you need and get the Account data :
 
     $data = $this->GoogleAnalyticsAccount->find('first', array(
         'conditions' => array(
-            'profileId' => $profileId,
+            'tableId' => $tableId,
             'start-date' => 'YYYY-MM-DD',
             'end-date' => 'YYYY-MM-DD')));
 
@@ -43,7 +43,7 @@ The `start-date` and `end-date` conditions are mandatory. You can add other cond
 
     $data = $this->GoogleAnalyticsAccount->find('first', array(
         'conditions' => array(
-            'profileId' => $profileId,
+            'tableId' => $tableId,
             'start-date' => 'YYYY-MM-DD',
             'end-date' => 'YYYY-MM-DD'
             'dimensions' => 'country',
@@ -54,7 +54,7 @@ will get you the new visits per country, ordered by descending new visits, for t
 
     $data = $this->GoogleAnalyticsAccount->find('first', array(
         'conditions' => array(
-            'profileId' => $profileId,
+            'tableId' => $tableId,
             'start-date' => 'YYYY-MM-DD',
             'end-date' => 'YYYY-MM-DD'
             'dimensions' => array('country', 'city'),

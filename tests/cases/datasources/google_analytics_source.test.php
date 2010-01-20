@@ -73,12 +73,21 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
                 'start-date' => '2009-01-01')));
         $this->assertError('end-date is required');
         $this->assertIdentical($result, null,
-            "should return null when start-date is missing : %s");
+            "should return null when end-date is missing : %s");
+
+        $result = $this->db->__validateQueryData(array(
+            'conditions' => array(
+                'start-date' => '2009-01-01',
+                'end-date' => '2009-02-01')));
+        $this->assertError('metrics is required');
+        $this->assertIdentical($result, null,
+            "should return null when metrics is missing : %s");
 
         $result = $this->db->__validateQueryData(array(
                 'conditions' => array(
                     'start-date' => '2009-01-01',
                     'end-date' => '2009-02-01',
+                    'metrics' => array('a'),
                     'dimensions' => array('a','b','c','d','e','f','g','h'))));
         $this->assertError('too many dimensions, the maximum allowed is 7');
         $this->assertIdentical($result, null,
@@ -97,7 +106,8 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
         $result = $this->db->__validateQueryData(array(
                 'conditions' => array(
                     'start-date' => '2010-01-01',
-                    'end-date' => '2009-01-01')));
+                    'end-date' => '2009-01-01',
+                    'metrics' => array('a'))));
         $this->assertError('date order is reversed');
         $this->assertIdentical($result, null,
             "should return null when date order is reversed : %s");
@@ -125,7 +135,7 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
             "should call accounts() when given no parameters : %s");
 
         $result = $mock->read($model, array(
-            'conditions' => array('profileId' => 123456)));
+            'conditions' => array('tableId' => 123456)));
         $this->assertEqual($result, 'account_data',
             "should call account_data() when given a profileId : %s");
 
@@ -411,20 +421,20 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
                     'id' => 'http://google.com/123',
                     'updated' => 'updated',
                     'title' => 'account1',
-                    'tableId' => 'ga:123',
-                    'accountId' => 456,
-                    'accountName' => 'main account',
-                    'profileId' => 123,
+                    'tableId' => '123',
+                    'accountId' => '',
+                    'accountName' => '',
+                    'profileId' => '',
                     'webPropertyId' => 'UA1')),
             array(
                 'Account' => array(
                     'id' => 'http://google.com/321',
                     'updated' => 'updated',
                     'title' => 'account2',
-                    'tableId' => 'ga:321',
-                    'accountId' => 456,
-                    'accountName' => 'main account',
-                    'profileId' => 321,
+                    'tableId' => '321',
+                    'accountId' => '',
+                    'accountName' => '',
+                    'profileId' => '',
                     'webPropertyId' => 'UA2')));
 
         $this->assertEqual($mock->accounts(), $expected,
@@ -451,13 +461,66 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
                     'id' => 'http://google.com/123',
                     'updated' => 'updated',
                     'title' => 'account1',
-                    'tableId' => 'ga:123',
-                    'accountId' => 456,
-                    'accountName' => 'main account',
-                    'profileId' => 123,
+                    'tableId' => '123',
+                    'accountId' => '',
+                    'accountName' => '',
+                    'profileId' => '',
                     'webPropertyId' => 'UA1')));
 
         $this->assertEqual($mock->accounts(), $expected,
             "should work with only one account : %s");
+    }
+
+    function test_extract_property_value() {
+        $entry = array(
+            array(
+                'id' => 'http://google.com/123',
+                'updated' => 'updated',
+                'title' => array('value' => 'account1'),
+                'tableId' => '123',
+                'property' => array(
+                    array(
+                        'name' => 'ga:accountId',
+                        'value' => ''),
+                    array(
+                        'name' => 'ga:accountName',
+                        'value' => ''),
+                    array(
+                        'name' => 'ga:profileId',
+                        'value' => ''),
+                    array(
+                        'name' => 'ga:webPropertyId',
+                        'value' => 'UA1'))));
+
+        $this->assertEqual(
+            $this->db->__extract_property_value($entry, 'webPropertyId'),
+            'UA1',
+            "should extract the value of a filled-in property : %s");
+        $this->assertEqual(
+            $this->db->__extract_property_value($entry, 'accountId'),
+            '',
+            "should assign an empty string for an empty property : %s");
+        $this->assertEqual(
+            $this->db->__extract_property_value(array(), 'accountId'),
+            '',
+            "should assign an empty string for an empty entry : %s");
+        $this->assertEqual(
+            $this->db->__extract_property_value($entry, ''),
+            '',
+            "should assign an empty string for an empty property : %s");
+        $this->assertEqual(
+            $this->db->__extract_property_value($entry, 'non existent'),
+            '',
+            "should assign an empty string for a non existent property : %s");
+        $this->assertEqual(
+            $this->db->__extract_property_value(
+                'wrong entry format', 'accountId'),
+            '',
+            "should assign an empty string for a wrong entry format : %s");
+        $this->assertEqual(
+            $this->db->__extract_property_value(
+                $entry, array('wrong property format')),
+            '',
+            "should assign an empty string for a wrong property format : %s");
     }
 }
