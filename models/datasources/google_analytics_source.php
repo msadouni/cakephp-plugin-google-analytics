@@ -351,7 +351,7 @@ class GoogleAnalyticsSource extends DataSource
     {
         $xml = new XML($response);
         $array = $xml->toArray();
-        $xml->__killParent();
+        $xml->_killParent();
         $xml->__destruct();
         $xml = null;
         unset($xml);
