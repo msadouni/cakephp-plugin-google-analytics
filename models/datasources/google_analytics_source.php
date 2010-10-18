@@ -257,6 +257,10 @@ class GoogleAnalyticsSource extends DataSource
                 $params['sort'] = join($sort, ',');
             }
         }
+        if (!empty($conditions['max-results'])) 
+        {
+            $params['max-results'] = $conditions['max-results'];
+        }
         return $params;
     }
 
