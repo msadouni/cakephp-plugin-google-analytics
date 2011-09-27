@@ -422,9 +422,9 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
                     'updated' => 'updated',
                     'title' => 'account1',
                     'tableId' => '123',
-                    'accountId' => '',
-                    'accountName' => '',
-                    'profileId' => '',
+                    'accountId' => '456',
+                    'accountName' => 'main account',
+                    'profileId' => '123',
                     'webPropertyId' => 'UA1')),
             array(
                 'Account' => array(
@@ -432,9 +432,9 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
                     'updated' => 'updated',
                     'title' => 'account2',
                     'tableId' => '321',
-                    'accountId' => '',
-                    'accountName' => '',
-                    'profileId' => '',
+                    'accountId' => '456',
+                    'accountName' => 'main account',
+                    'profileId' => '321',
                     'webPropertyId' => 'UA2')));
 
         $this->assertEqual($mock->accounts(), $expected,
@@ -462,9 +462,9 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
                     'updated' => 'updated',
                     'title' => 'account1',
                     'tableId' => '123',
-                    'accountId' => '',
-                    'accountName' => '',
-                    'profileId' => '',
+                    'accountId' => '456',
+                    'accountName' => 'main account',
+                    'profileId' => '123',
                     'webPropertyId' => 'UA1')));
 
         $this->assertEqual($mock->accounts(), $expected,
