@@ -3,7 +3,7 @@
 <?php foreach ($accounts as $account): ?>
     <li>
         <?php
-        echo $html->link($account['Account']['title'], array(
+        echo $this->Html->link($account['Account']['title'], array(
             'action' => 'show', $account['Account']['tableId']));
         ?>
     </li>

@@ -1,4 +1,4 @@
-<p><?php echo $html->link('« Back to accounts', array('action' => 'index')) ?></p>
+<p><?php echo $this->Html->link('« Back to accounts', array('action' => 'index')) ?></p>
 <h2><?php echo $account['Account']['name'] ?></h2>
 <h3>Request info</h3>
 <ul>
@@ -54,11 +54,11 @@
     <input type="hidden" name="tableId" value="<?php echo $tableId ?>">
     <div>
         <label for="start-date">Start date (YYY-MM-DD)</label>
-        <input id="start-date" name="start-date" value="<?php echo $startDate ?>">
+        <input id="start-date" name="start-date" value="<?php echo $start_date ?>">
     </div>
     <div>
         <label for="end-date">End date (YYY-MM-DD)</label>
-        <input id="end-date" name="end-date" value="<?php echo $endDate ?>">
+        <input id="end-date" name="end-date" value="<?php echo $end_date ?>">
     </div>
     <div>
         <label for="dimensions">Dimensions (ex : country, or country,city)</label>
