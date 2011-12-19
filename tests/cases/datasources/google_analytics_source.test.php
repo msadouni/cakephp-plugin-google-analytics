@@ -37,11 +37,15 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
             'conditions' => array(
                 'dimensions' => array('country', 'city'),
                 'metrics' => array('newVisits', 'uniquePageviews'),
-                'sort' => array('newVisits', 'city'))));
+                'sort' => array('newVisits', 'city'),
+				'filters' => array('eventLabel' => 'tester')
+			)
+		));
         $expected = array(
             'dimensions' => 'ga:country,ga:city',
             'metrics' => 'ga:newVisits,ga:uniquePageviews',
-            'sort' => 'ga:newVisits,ga:city');
+            'sort' => 'ga:newVisits,ga:city',
+			'filters' => 'ga:eventLabel==tester');
         $this->assertEqual($result, $expected,
             "should append ga: to array parameters : %s");
 
@@ -58,6 +62,7 @@ class GoogleAnalyticsSourceTestCase extends CakeTestCase
         $expected = array('sort' => 'ga:newVisits,-ga:city');
         $this->assertEqual($result, $expected,
             "should correctly treat the minus on a multiple sort : %s");
+
     }
 
     function test___validateQueryData()

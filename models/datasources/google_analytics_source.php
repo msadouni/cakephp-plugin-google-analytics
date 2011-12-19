@@ -257,10 +257,26 @@ class GoogleAnalyticsSource extends DataSource
                 $params['sort'] = join($sort, ',');
             }
         }
+
         if (!empty($conditions['max-results'])) 
         {
             $params['max-results'] = $conditions['max-results'];
         }
+
+		if(!empty($conditions['filters'])) {
+			$params['filters'] = array();
+			if(is_array($conditions['filters'])) {
+				foreach($conditions['filters'] as $field => $filter) {
+					
+					// Only supporting exact match for now
+					$params['filters'][] = sprintf('ga:%s==%s', $field, $filter);
+				}
+			}
+			
+			// Only supporting 'AND' for now
+			$params['filters'] = implode(';', $params['filters']);
+		}
+
         return $params;
     }
 
