@@ -1,3 +1,15 @@
+# Deprecation notice
+
+This plugin was originally created as a personal exercise to experiment with datasources.
+
+To my surprise it has been used by far more people than I can offer support for.
+
+I don't have the time to upgrade it to support CakePHP 2 and the Google Analytics newest changes.
+
+I advise you to check the Network tab for a recent fork that has more chances to be up-to-date.
+
+That said, if you're <del>brave</del> curious, and decide to use it anyway, see below.
+
 # Install
 Several possibilities :
 
